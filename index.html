@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>हमर युवा समिति हरदा</title>
+<style>
+:root{--bg:#f3f6ef;--sf:#fff;--tx:#17251b;--mu:#5b6b5f;--ac:#1f6b45;--ac2:#e8f2ea;--bd:#d5ddd3;--wn:#b4531a;--er:#b3261e;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101712;--sf:#18221b;--tx:#e8efe9;--mu:#9bab9f;--ac:#5fc08a;--ac2:#1d2e23;--bd:#2c3b30;--wn:#e59a64;--er:#f2827a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101712;--sf:#18221b;--tx:#e8efe9;--mu:#9bab9f;--ac:#5fc08a;--ac2:#1d2e23;--bd:#2c3b30;--wn:#e59a64;--er:#f2827a;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 "Noto Sans Devanagari","Mukta",system-ui,sans-serif;padding-bottom:74px}
+header{background:var(--ac);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header h1{font-size:18px;margin:0;line-height:1.2}header small{opacity:.85;font-size:12px}
+main{padding:14px;max-width:760px;margin:auto}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+.card h2{font-size:16px;margin:0 0 10px}
+.big{font-size:30px;font-weight:700;color:var(--ac)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.k{font-size:12px;color:var(--mu)}.v{font-weight:700;font-size:17px}
+label{display:block;font-size:13px;color:var(--mu);margin:8px 0 2px}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+button,.btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:9px 14px;font:inherit;cursor:pointer;text-decoration:none;display:inline-block}
+button.s,.btn.s{background:var(--ac2);color:var(--ac);padding:6px 10px;font-size:13px}
+button.r{background:var(--er)}
+.row{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-top:1px solid var(--bd);align-items:center;flex-wrap:wrap}
+.row:first-of-type{border-top:0}
+.tag{font-size:12px;padding:2px 8px;border-radius:99px;background:var(--ac2);color:var(--ac)}
+.tag.w{background:#fbe9dc;color:var(--wn)}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--sf);border-top:1px solid var(--bd);display:flex;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;background:none;color:var(--mu);border-radius:0;padding:10px 2px;font-size:12px}
+nav button.on{color:var(--ac);font-weight:700;box-shadow:inset 0 3px 0 var(--ac)}
+.msg{font-size:13px;color:var(--wn);margin-top:6px}.ok{color:var(--ac)}
+.note{font-size:12px;color:var(--mu)}
+</style>
+</head>
+<body>
+<header><div><h1 id="ttl"></h1><small id="who"></small></div><div><button class="s" onclick="tg()" id="lg"></button> <button class="s" onclick="out()" id="lo" style="display:none"></button></div></header>
+<main id="app"></main>
+<nav id="nav" style="display:none"></nav>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+const L={hi:{t:"हमर युवा समिति हरदा",home:"मुख्य",loans:"लोन",mem:"सदस्य",mon:"आय-व्यय",calc:"गणना",log:"रिकॉर्ड",mob:"मोबाइल नंबर",pw:"पासवर्ड",login:"लॉगिन",bad:"नंबर या पासवर्ड गलत है",demo:"डेटा Firebase में सुरक्षित रहता है।",dep:"कुल जमा (सदस्य)",out:"बाहर दिया लोन",intr:"ब्याज आय (शुद्ध)",oth:"अन्य आय",exp:"व्यय",cash:"समिति के पास नकद",share:"प्रति सदस्य हिस्सा",limit:"लोन की अधिकतम सीमा (20%)",amt:"राशि",date:"दिनांक",save:"सहेजें",edit:"सुधारें",member:"सदस्य",ret:"वापसी दर्ज करें",open:"चालू",paid:"चुकाया",due:"देय तिथि",rate:"रिवार्ड दर",reward:"रिवार्ड",interest:"ब्याज (3%/माह)",late:"देरी जुर्माना",total:"कुल जमा करना",net:"रिवार्ड घटाकर वास्तविक लागत",wa:"WhatsApp पर भेजें",add:"जोड़ें",cat:"श्रेणी",inc:"आय",exs:"व्यय",ro:"सिर्फ़ सचिव संपादन कर सकते हैं",lim2:"सीमा से अधिक लोन",two:"इस सदस्य ने इस वर्ष 2 लोन ले लिए हैं",mths:"माह देरी",newloan:"नया लोन",adddep:"जमा दर्ज करें",pwn:"पासवर्ड (सिर्फ़ सचिव को दिखेगा)",clear:"डेमो डेटा हटाएँ",calcT:"लोन कैलकुलेटर",dsave:"सहेजा गया",bal:"बकाया",depn:"जमा",noRw:"रिवार्ड नहीं",paidSoFar:"अब तक जमा",mo:"माह",exists:"पासवर्ड पहले से बना है, लॉगिन करें",wait:"डेटा अभी तैयार नहीं, पहले सचिव लॉगिन करें",cancel:"रद्द करें",fixpay:"वापसी सुधारें",first:"पहली बार लॉगिन: अपना पासवर्ड बनाएँ",npw:"नया पासवर्ड (कम से कम 6 अक्षर)",cfm:"पासवर्ड दोबारा लिखें",cpw:"पासवर्ड बनाएँ",mis:"दोनों पासवर्ड मेल नहीं खाते",short:"पासवर्ड कम से कम 6 अक्षर का हो",rst:"रीसेट",notset:"बनाना बाकी",borrow:"लोन लेने वाले सदस्य",none:"अभी कोई चालू लोन नहीं",firsthint:"पहली बार हैं? ऊपर के बटन से अपना पासवर्ड बनाएँ।"},
+en:{t:"Hamar Yuva Samiti Harda",home:"Home",loans:"Loans",mem:"Members",mon:"Income/Exp",calc:"Calculator",log:"Edit log",mob:"Mobile number",pw:"Password",login:"Login",bad:"Wrong number or password",demo:"Data is stored securely in Firebase.",dep:"Total deposits",out:"Loans outstanding",intr:"Interest income (net)",oth:"Other income",exp:"Expenses",cash:"Cash with committee",share:"Share per member",limit:"Max loan limit (20%)",amt:"Amount",date:"Date",save:"Save",edit:"Edit",member:"Member",ret:"Record repayment",open:"Open",paid:"Repaid",due:"Due date",rate:"Reward rate",reward:"Reward",interest:"Interest (3%/mo)",late:"Late fee",total:"Total to repay",net:"Net cost after reward",wa:"Send on WhatsApp",add:"Add",cat:"Category",inc:"Income",exs:"Expense",ro:"Only the secretary can edit",lim2:"Exceeds loan limit",two:"This member already took 2 loans this year",mths:"months late",newloan:"New loan",adddep:"Record deposit",pwn:"Password (visible to secretary only)",clear:"Clear demo data",calcT:"Loan calculator",dsave:"Saved",bal:"Due",depn:"Deposits",noRw:"No reward",paidSoFar:"Paid so far",mo:"mo",exists:"Password already created, please log in",wait:"Data not ready, secretary must log in first",cancel:"Cancel",fixpay:"Edit repayment",first:"First login: create your password",npw:"New password (min 6 characters)",cfm:"Re-enter password",cpw:"Create password",mis:"Passwords do not match",short:"Password must be at least 6 characters",rst:"Reset",notset:"Not created",borrow:"Members with loans",none:"No open loans",firsthint:"New here? Use the button above to create your password."}};
+const names=[["गणेश नेताम","अध्यक्ष","8959470785"],["चंद्रशेखर सिदार","सचिव","9669126738"],["भरत यादव","सदस्य","9399070899"],["महेंद्र साहू","सदस्य","9131852440"],["हेमन्त साहू","सदस्य","6260557373"],["मनोहर साहू","सदस्य","8091783961"],["सेतकुमार साहू","सदस्य","9202766263"],["दिनदयाल साहू","सदस्य","9103010995"],["तोपलाल यादव","सदस्य","6263983388"],["मनहरण दास","सदस्य","6260721600"],["उत्तरा कुमार सिदार","सदस्य","9340600645"],["अश्वनी कुमार सिदार","सदस्य","9302442790"],["रवि सिदार","सदस्य","9399451595"],["गौरी शंकर यादव","सदस्य","9131465765"],["संजय कुमार साहू","सदस्य","9301001277"],["राजीव साहू","सदस्य","7999424651"],["मुकेश साहू","सदस्य","7974511793"]];
+const seed=()=>({m:names.map((n,i)=>({id:i+1,name:n[0],role:n[1],mob:n[2]})),d:[],l:[],o:[],g:[],n:20});
+let S,lang="hi",me=null,tab="home",ed=null,msg="",su=null,ep=null;
+S=null;
+const t=k=>L[lang][k]||k,$=id=>document.getElementById(id);
+const save=()=>{if(S)ref.set(S).catch(e=>alert("Save error: "+e.code))};
+const R=n=>"₹"+Math.round(n).toLocaleString("en-IN");
+const today=()=>new Date().toISOString().slice(0,10);
+const mn=id=>(S.m.find(x=>x.id==id)||{}).name||"";
+const isSec=()=>me&&me.role=="सचिव";
+const log=m=>{S.g.unshift({t:new Date().toLocaleString("en-IN"),by:me.name,m});};
+const slab=a=>a<=40000?.5:a<=45000?.6:a<=50000?.7:a<=55000?.8:a<=60000?.9:1;
+const mdiff=(d,p)=>{const a=new Date(d),b=new Date(p);let m=(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth();if(b.getDate()>a.getDate())m++;return Math.min(6,Math.max(1,m))};const addM=(d,n)=>{const x=new Date(d);x.setMonth(x.getMonth()+n);return x.toISOString().slice(0,10)};
+function calc(a,d,paid,nr,pys){a=+a;const due=addM(d,6),mm=paid?mdiff(d,paid):6,i=a*.03*mm,r=slab(a),rw=a*r/100*mm;let lm=0,lf=0;
+ const p=paid||null;if(p&&p>due){lm=Math.ceil((new Date(p)-new Date(due))/864e5/30);for(let k=0;k<lm;k++){const st=new Date(new Date(due).getTime()+k*30*864e5).toISOString().slice(0,10);const pd2=(pys||[]).filter(x=>x.date<=st).reduce((z,x)=>z+ +x.amt,0);lf+=Math.max(0,a+i-pd2)*.03}}
+ const rwd=(lm||nr)?0:rw;return{i,r,rw:rwd,due,lm,lf,mm,tot:a+i+lf,net:i+lf-rwd}}
+function stats(){const dep=S.d.reduce((s,x)=>s+ +x.amt,0);let out=0,ii=0;
+ let po=0;S.l.forEach(l=>{const ps=(l.pays||[]).reduce((z,x)=>z+ +x.amt,0);if(l.pd){const c=calc(l.amt,l.date,l.pd,l.nr,l.pays);ii+=c.net}else{out+=+l.amt;po+=ps}});
+ const oi=S.o.filter(x=>x.k=="in").reduce((s,x)=>s+ +x.amt,0),ox=S.o.filter(x=>x.k=="ex").reduce((s,x)=>s+ +x.amt,0);
+ const cash=dep+ii+oi-ox-out+po,tot=cash+out;return{dep,out,ii,oi,ox,cash,share:tot/S.m.length,lim:(dep+ii+oi)*.2}}
+function tg(){lang=lang=="hi"?"en":"hi";draw()}
+function out(){me=null;tab="home";draw()}
+function login(){const m=$("lm").value.trim(),p=$("lp").value;me=S.m.find(x=>x.mob==m&&x.pw==p);msg=me?"":t("bad");draw()}
+function go(x){tab=x;ed=null;ep=null;msg="";draw()}
+function saveLoan(){const mid=+$("lmid").value,a=+$("la").value,d=$("ld").value,s=stats();
+ const yr=d.slice(0,4),cnt=S.l.filter(l=>l.mid==mid&&l.date.slice(0,4)==yr&&l.id!=ed).length;
+ if(!a||!d)return;if(cnt>=2){msg=t("two");return draw()}
+ const outNow=S.l.filter(l=>!l.pd&&l.id!=ed).reduce((z,l)=>z+ +l.amt,0);
+ if(a>s.lim){msg=t("lim2")+": "+R(s.lim);return draw()}
+ if(ed){const l=S.l.find(x=>x.id==ed);log(`लोन सुधार / Loan edit: ${mn(l.mid)} ${R(l.amt)} ${l.date} → ${mn(mid)} ${R(a)} ${d}`);Object.assign(l,{mid,amt:a,date:d});if((l.pays||[]).length)reeval(l)}
+ else{S.l.push({id:S.n++,mid,amt:a,date:d});log(`नया लोन / New loan: ${mn(mid)} ${R(a)} ${d}`)}
+ ed=null;msg=t("dsave");save();draw()}
+function repay(id){const l=S.l.find(x=>x.id==id),p=$("pd"+id).value,a=+$("pa"+id).value;if(!a||!p)return;l.pays=l.pays||[];const before=l.pays.reduce((z,x)=>z+ +x.amt,0),need=calc(l.amt,l.date,p,true,l.pays).tot-before;l.pays.push({amt:a,date:p});if(a<need-0.5){l.nr=true;log(`आंशिक जमा, रिवार्ड रद्द / Partial payment, reward cancelled: ${mn(l.mid)} ${R(a)} on ${p}`)}else{l.pd=p;log(`वापसी / Repaid: ${mn(l.mid)} ${R(a)} on ${p}`)}save();draw()}
+function addDep(){const mid=+$("dm").value,a=+$("da").value,d=$("dd").value;if(!a||!d)return;S.d.push({id:S.n++,mid,amt:a,date:d});log(`जमा / Deposit: ${mn(mid)} ${R(a)} ${d}`);save();draw()}
+function addOth(){const k=$("ok").value,c=$("oc").value,a=+$("oa").value,d=$("od").value;if(!a||!d||!c)return;S.o.push({id:S.n++,k,c,amt:a,date:d});log(`${k=="in"?"आय/Income":"व्यय/Expense"}: ${c} ${R(a)} ${d}`);save();draw()}
+function setPw(id){const m=S.m.find(x=>x.id==id),v=$("pw"+id).value;if(v.length<4)return;m.pw=v;log(`पासवर्ड बदला / Password changed: ${m.name}`);save();msg=t("dsave");draw()}
+function wa(l){const c=calc(l.amt,l.date,today(),l.nr,l.pays);const txt=`हमर युवा समिति हरदा\n${mn(l.mid)} जी, आपका लोन ${R(l.amt)} की देय तिथि ${c.due.split("-").reverse().join("/")} है।\nबकाया: ${R(c.tot-(l.pays||[]).reduce((z,x)=>z+ +x.amt,0))}`;
+ const m=S.m.find(x=>x.id==l.mid);return `https://wa.me/91${m.mob}?text=${encodeURIComponent(txt)}`}
+function reeval(l){l.pays=(l.pays||[]).sort((a,b)=>a.date<b.date?-1:1);l.pd=null;l.nr=false;const b=[];for(const x of l.pays){const need=calc(l.amt,l.date,x.date,true,b).tot-b.reduce((z,y)=>z+ +y.amt,0);b.push(x);if(x.amt<need-0.5)l.nr=true;else{l.pd=x.date;break}}}
+function repay(id){const l=S.l.find(x=>x.id==id),p=$("pd"+id).value,a=+$("pa"+id).value;if(!a||!p)return;l.pays=l.pays||[];l.pays.push({amt:a,date:p});reeval(l);log(`${l.pd?"वापसी / Repaid":"आंशिक जमा, रिवार्ड रद्द / Partial payment, reward cancelled"}: ${mn(l.mid)} ${R(a)} on ${p}`);save();draw()}
+function epCard(l){if(!l)return"";return `<div class="card"><h2>${t("fixpay")}: ${mn(l.mid)}</h2>`+(l.pays||[]).map((x,i)=>`<div class="row"><input id="ea${i}" type="number" value="${x.amt}" style="width:40%"><input id="ex${i}" type="date" value="${x.date}" style="width:40%"><button class="s r" onclick="delPay(${i})">✕</button></div>`).join("")+`<br><button onclick="savePays()">${t("save")}</button> <button class="s" onclick="ep=null;draw()">${t("cancel")}</button></div>`}
+function rdPays(l){return (l.pays||[]).map((x,i)=>({amt:+$("ea"+i).value,date:$("ex"+i).value}))}
+function savePays(){const l=S.l.find(x=>x.id==ep);l.pays=rdPays(l).filter(x=>x.amt>0&&x.date);reeval(l);log(`वापसी सुधार / Repayment edited: ${mn(l.mid)}`);ep=null;save();draw()}
+function delPay(i){const l=S.l.find(x=>x.id==ep);l.pays=rdPays(l);l.pays.splice(i,1);reeval(l);log(`वापसी हटाई / Payment removed: ${mn(l.mid)}`);save();draw()}
+function rstPw(id){const m=S.m.find(x=>x.id==id);m.pw="";log(`पासवर्ड रीसेट / Password reset: ${m.name}`);save();draw()}
+function bl(){return S.l.filter(l=>!l.pd).map(l=>`<div class="row"><div><b>${mn(l.mid)}</b><br><span class="note">${l.date} → ${addM(l.date,6)}</span></div><b>${R(l.amt)}</b></div>`).join("")||`<span class="note">${t("none")}</span>`}
+function login(){const m=$("lm").value.trim(),mb=S.m.find(x=>x.mob==m);if(!mb){msg=t("bad");return draw()}if(!mb.pw){su=mb;msg="";return draw()}me=$("lp").value===mb.pw?mb:null;msg=me?"":t("bad");draw()}
+function mkpw(){const a=$("n1").value,b=$("n2").value;if(a.length<4){msg=t("short");return draw()}if(a!==b){msg=t("mis");return draw()}su.pw=a;me=su;su=null;log(`पासवर्ड बनाया / Password created: ${me.name}`);msg="";save();draw()}
+function fixD(){const w=document.createTreeWalker($("app"),NodeFilter.SHOW_TEXT),a=[];let n;while(n=w.nextNode())a.push(n);a.forEach(n=>{n.nodeValue=n.nodeValue.replace(/(\d{4})-(\d{2})-(\d{2})/g,"$3/$2/$1")})}
+function wipe(){S.d=[];S.l=[];S.o=[];log("डेमो डेटा हटाया / Demo data cleared");save();draw()}
+const opts=()=>S.m.map(m=>`<option value="${m.id}">${m.name}</option>`).join("");
+function V(){const s=stats();
+if(tab=="home")return `<div class="card"><div class="k">${t("share")}</div><div class="big">${R(s.share)}</div><div class="note">(${t("cash")} + ${t("out")}) ÷ ${S.m.length}</div></div>
+<div class="card grid"><div><div class="k">${t("dep")}</div><div class="v">${R(s.dep)}</div></div><div><div class="k">${t("out")}</div><div class="v">${R(s.out)}</div></div><div><div class="k">${t("intr")}</div><div class="v">${R(s.ii)}</div></div><div><div class="k">${t("oth")}</div><div class="v">${R(s.oi)}</div></div><div><div class="k">${t("exp")}</div><div class="v">${R(s.ox)}</div></div><div><div class="k">${t("cash")}</div><div class="v">${R(s.cash)}</div></div></div>
+<div class="card"><div class="k">${t("limit")}</div><div class="v">${R(s.lim)}</div></div><div class="card"><h2>${t("borrow")}</h2>${bl()}</div><p class="note">${t("demo")}</p>`;
+if(tab=="calc")return `<div class="card"><h2>${t("calcT")}</h2><label>${t("amt")}</label><input id="ca" type="number" value="60000" oninput="cc()"><label>${t("date")}</label><input id="cd" type="date" value="${today()}" oninput="cc()"><label>${t("date")} (${t("paid")})</label><input id="cp" type="date" oninput="cc()"><div id="cr"></div></div>`;
+if(tab=="loans"&&isSec()){const e=ed?S.l.find(x=>x.id==ed):null;
+ return (ep?epCard(S.l.find(x=>x.id==ep)):"")+(isSec()?`<div class="card"><h2>${ed?t("edit"):t("newloan")}</h2><label>${t("member")}</label><select id="lmid">${opts()}</select><label>${t("amt")}</label><input id="la" type="number" value="${e?e.amt:""}"><label>${t("date")}</label><input id="ld" type="date" value="${e?e.date:today()}"><p class="msg">${msg}</p><button onclick="saveLoan()">${t("save")}</button></div>`:`<p class="note">${t("ro")}</p>`)+
+ `<div class="card">`+(S.l.length?S.l.slice().reverse().map(l=>{const c=calc(l.amt,l.date,l.pd||today(),l.nr,l.pays),ps=(l.pays||[]).reduce((z,x)=>z+ +x.amt,0);return `<div class="row"><div><b>${mn(l.mid)}</b><br><span class="note">${R(l.amt)} · ${l.date} → ${c.due}</span><br><span class="note">${t("rate")} ${c.r}% · ${t("reward")} ${R(c.rw)} · ${t("interest")} ${R(c.i)} (${c.mm} ${t("mo")})${c.lm?` · ${t("late")} ${R(c.lf)} (${c.lm} ${t("mths")})`:""}</span><br><b>${t("total")}: ${R(c.tot)}</b>${ps?`<br><span class="note">${t("paidSoFar")}: ${R(ps)} · ${t("bal")}: ${R(Math.max(0,c.tot-ps))}</span>`:""}${l.nr?` <span class="tag w">${t("noRw")}</span>`:""}</div><div>${l.pd?`<span class="tag">${t("paid")} ${l.pd}</span>`:`<span class="tag ${c.lm?"w":""}">${t("open")}</span>`}${!l.pd&&isSec()?`<br><input id="pa${l.id}" type="number" placeholder="${t("amt")}" value="${Math.round(Math.max(0,c.tot-ps))}" style="margin:6px 0"><input id="pd${l.id}" type="date" value="${today()}" style="margin:6px 0"><button class="s" onclick="repay(${l.id})">${t("ret")}</button>`:""}${isSec()?`<br><button class="s" onclick="ed=${l.id};draw()">${t("edit")}</button>${(l.pays||[]).length?` <button class="s" onclick="ep=${l.id};draw()">${t("fixpay")}</button>`:""}`:""}${!l.pd?`<br><a class="btn s" target="_blank" rel="noopener" href="${wa(l)}">${t("wa")}</a>`:""}</div></div>`}).join(""):"—")+`</div>`}
+if(tab=="mem")return (isSec()?`<div class="card"><h2>${t("adddep")}</h2><label>${t("member")}</label><select id="dm">${opts()}</select><label>${t("amt")}</label><input id="da" type="number" value="500"><label>${t("date")}</label><input id="dd" type="date" value="${today()}"><br><br><button onclick="addDep()">${t("add")}</button></div>`:"")+
+ `<div class="card">`+S.m.map(m=>{const d=S.d.filter(x=>x.mid==m.id).reduce((z,x)=>z+ +x.amt,0),b=S.l.filter(l=>l.mid==m.id&&!l.pd).reduce((z,l)=>z+ +l.amt,0);return `<div class="row"><div><b>${m.name}</b> <span class="tag">${m.role}</span><br><span class="note">${m.mob} · ${t("depn")} ${R(d)} · ${t("bal")} ${R(b)}</span></div>${isSec()?`<div><b>${PW[m.mob]||"—"}</b></div>`:""}</div>`}).join("")+`</div>${isSec()?`<p class="note">${t("pwn")}</p>`:""}`;
+if(tab=="mon")return (isSec()?`<div class="card"><label>${t("cat")}</label><input id="oc"><label>${t("inc")} / ${t("exs")}</label><select id="ok"><option value="in">${t("inc")}</option><option value="ex">${t("exs")}</option></select><label>${t("amt")}</label><input id="oa" type="number"><label>${t("date")}</label><input id="od" type="date" value="${today()}"><br><br><button onclick="addOth()">${t("add")}</button></div>`:"")+`<div class="card">`+(S.o.length?S.o.slice().reverse().map(x=>`<div class="row"><div>${x.c}<br><span class="note">${x.date}</span></div><b style="color:var(--${x.k=="in"?"ac":"er"})">${x.k=="in"?"+":"−"}${R(x.amt)}</b></div>`).join(""):"—")+`</div>`;
+if(tab=="log"&&isSec())return `<div class="card">`+(S.g.length?S.g.map(g=>`<div class="row"><div>${g.m}<br><span class="note">${g.by} · ${g.t}</span></div></div>`).join(""):"—")+`</div>`}
+function cc(){const a=+$("ca").value,d=$("cd").value,p=$("cp").value;if(!a||!d)return;const c=calc(a,d,p||null);
+$("cr").innerHTML=`<div class="row"><span>${t("due")}</span><b>${c.due}</b></div><div class="row"><span>${t("interest")} (${c.mm} ${t("mo")})</span><b>${R(c.i)}</b></div><div class="row"><span>${t("rate")}</span><b>${c.r}%</b></div><div class="row"><span>${t("reward")}</span><b>${R(c.rw)}</b></div>${c.lm?`<div class="row"><span>${t("late")} (${c.lm} ${t("mths")})</span><b>${R(c.lf)}</b></div>`:""}<div class="row"><span>${t("total")}</span><b>${R(c.tot)}</b></div><div class="row"><span>${t("net")}</span><b>${R(c.net)}</b></div>`;fixD()}
+function draw(){document.title=t("t");$("ttl").textContent=t("t");$("lg").textContent=lang=="hi"?"EN":"हिं";$("lo").style.display=me?"":"none";$("lo").textContent="⎋";$("who").textContent=me?`${me.name} (${me.role})`:"";
+ if(!me){$("nav").style.display="none";$("app").innerHTML=`<div class="card"><h2>${su?t("first"):t("login")}</h2><label>${t("mob")}</label><input id="lm" inputmode="numeric" maxlength="10">`+(su?`<label>${t("npw")}</label><input id="n1" type="password"><label>${t("cfm")}</label><input id="n2" type="password">`:`<label>${t("pw")}</label><input id="lp" type="password">`)+`<p class="msg">${msg}</p><button onclick="${su?"mkpw()":"login()"}">${su?t("cpw"):t("login")}</button> <button class="s" onclick="su=!su;msg='';draw()">${su?t("cancel"):t("first")}</button><p class="note">${t("firsthint")}</p></div>`;return}
+if((tab=="log"||tab=="loans")&&!isSec())tab="home";$("nav").style.display="flex";$("nav").innerHTML=[["home","home"],["loans","loans"],["mem","mem"],["mon","mon"],["calc","calc"],["log","log"]].filter(x=>(x[0]!="log"&&x[0]!="loans")||isSec()).map(x=>`<button class="${tab==x[0]?"on":""}" onclick="go('${x[0]}')">${t(x[1])}</button>`).join("");
+ $("app").innerHTML=V();if(tab=="calc")cc();if(tab=="loans"&&ed){$("lmid").value=S.l.find(x=>x.id==ed).mid}fixD()}
+const cfg={apiKey:"AIzaSyCaqkjDKOtM4EZBO80uSOsQIGA21CcrCXA",authDomain:"yuva-samiti-harda.firebaseapp.com",projectId:"yuva-samiti-harda",storageBucket:"yuva-samiti-harda.firebasestorage.app",messagingSenderId:"961373303796",appId:"1:961373303796:web:16d8722811669d9a73bfa1"};
+firebase.initializeApp(cfg);const auth=firebase.auth(),db=firebase.firestore(),ref=db.doc("samiti/data");let PW={},unsub=null;const SEC="9669126738";
+function login(){const m=$("lm").value.trim(),p=$("lp").value;if(!names.some(n=>n[2]==m)){msg=t("bad");return draw()}auth.signInWithEmailAndPassword(m+"@samiti.app",p).catch(e=>{msg=t("bad")+" ("+e.code+")";draw()})}
+function mkpw(){const m=$("lm").value.trim(),a=$("n1").value,b=$("n2").value;if(!names.some(n=>n[2]==m)){msg=t("bad");return draw()}if(a.length<6){msg=t("short");return draw()}if(a!==b){msg=t("mis");return draw()}auth.createUserWithEmailAndPassword(m+"@samiti.app",a).then(()=>db.collection("secrets").doc(m).set({pw:a})).catch(e=>{msg=e.code=="auth/email-already-in-use"?t("exists"):e.code;draw()})}
+function out(){auth.signOut()}
+auth.onAuthStateChanged(u=>{if(unsub){unsub();unsub=null}if(!u){me=null;S=null;PW={};tab="home";draw();return}
+const m=u.email.split("@")[0];
+unsub=ref.onSnapshot(sn=>{if(!sn.exists){if(m==SEC){S=seed();me=S.m.find(x=>x.mob==m);save()}else{msg=t("wait");auth.signOut()}return}
+S=sn.data();me=S.m.find(x=>x.mob==m)||null;su=false;
+if(isSec()&&!Object.keys(PW).length)db.collection("secrets").get().then(q=>{q.forEach(d=>PW[d.id]=d.data().pw);draw()}).catch(()=>{});
+draw()},e=>{msg=e.code;auth.signOut()})});
+draw();
+</script>
+</body>
+</html>
