@@ -120,9 +120,8 @@ const MH=["जनवरी","फ़रवरी","मार्च","अप्र
 const mlab=k=>{const[y,m]=k.split("-");return (lang=="en"?ME:MH)[+m-1]+" "+y};
 const openL=()=>S.l.filter(l=>!l.pd&&(!bm||l.date.slice(0,7)==bm));
 const OB=id=>S.l.filter(l=>l.mid==id&&!l.pd).reduce((z,l)=>z+ +l.amt,0);
-const AR=[["0-40000","≤ ₹40,000",0,40000],["40001-45000","₹40,001 – 45,000",40001,45000],["45001-50000","₹45,001 – 50,000",45001,50000],["50001-55000","₹50,001 – 55,000",50001,55000],["55001-60000","₹55,001 – 60,000",55001,60000],["60001+","₹60,001+",60001,1e12]];
-function afOk(m){if(!af)return true;const b=OB(m.id);if(af=="any")return b>0;if(af=="none")return b==0;const r=AR.find(x=>x[0]==af);return !!r&&b>0&&b>=r[2]&&b<=r[3]}
-function af2(){return `<label>${t("afil")}</label><select onchange="af=this.value;draw()"><option value="">${t("mall2")}</option><option value="any"${af=="any"?" selected":""}>${t("hasL")}</option><option value="none"${af=="none"?" selected":""}>${t("noL")}</option>${AR.map(x=>`<option value="${x[0]}"${x[0]==af?" selected":""}>${x[1]}</option>`).join("")}</select>`}
+function afOk(m){if(!af)return true;const b=OB(m.id);if(af=="any")return b>0;if(af=="none")return b==0;return true}
+function af2(){return `<label>${t("afil")}</label><select onchange="af=this.value;draw()"><option value="">${t("mall2")}</option><option value="any"${af=="any"?" selected":""}>${t("hasL")}</option><option value="none"${af=="none"?" selected":""}>${t("noL")}</option></select>`}
 function bf(){const ks=[...new Set(S.l.filter(l=>!l.pd).map(l=>l.date.slice(0,7)))].sort().reverse();if(bm&&!ks.includes(bm))bm="";
  return `<label>${t("mfil")}</label><select onchange="bm=this.value;draw()"><option value="">${t("mall")}</option>${ks.map(k=>`<option value="${k}"${k==bm?" selected":""}>${mlab(k)}</option>`).join("")}</select>`}
 function bl(){return openL().map(l=>{const c=calc(l.amt,l.date,today(),l.nr,l.pays);return `<div class="row"><div><b>${mn(l.mid)}</b><br><span class="note">${l.date} → ${c.due}</span><br><span class="note">${t("interest")} ${R(c.i)}${c.lm?` · ${t("late")} ${R(c.lf)}`:""}</span></div><div style="text-align:right"><b>${t("amt")} ${R(l.amt)}</b><br><b>${t("total")}: ${R(c.tot)}</b></div></div>`}).join("")||`<span class="note">${t("none")}</span>`}
